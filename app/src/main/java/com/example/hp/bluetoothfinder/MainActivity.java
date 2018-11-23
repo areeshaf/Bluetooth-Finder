@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("Searching...");
         button.setEnabled(false);
 
+        deviceNameAddress.clear();
         int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
