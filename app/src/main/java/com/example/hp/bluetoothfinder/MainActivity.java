@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     BluetoothAdapter bluetoothAdapter;
     ArrayList<String> deviceNameAddress=new ArrayList<>();
+    ArrayList<String> addresses=new ArrayList<>();
     ArrayAdapter arrayAdapter;
 
     private final BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
@@ -43,13 +44,16 @@ public class MainActivity extends AppCompatActivity {
                 String rssi=Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
                 Log.i("Device Found","Name : "+name+" Address : "+address+" RSSI : "+rssi);
 
-                if(name==null ||name.equals("")){
+                if(!addresses.contains(address)) {
+                    addresses.add(address);
+                    if (name == null || name.equals("")) {
 
-                    deviceNameAddress.add(address+" - RSSI "+rssi+"dBm");
-                }else {
-                    deviceNameAddress.add(name+" - RSSI "+rssi+"dBm");
+                        deviceNameAddress.add(address + " - RSSI " + rssi + "dBm");
+                    } else {
+                        deviceNameAddress.add(name + " - RSSI " + rssi + "dBm");
+                    }
+                    arrayAdapter.notifyDataSetChanged();
                 }
-                arrayAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         button.setEnabled(false);
 
         deviceNameAddress.clear();
+        addresses.clear();
         int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
