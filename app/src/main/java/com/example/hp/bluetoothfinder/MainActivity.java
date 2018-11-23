@@ -12,9 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     Button button;
     BluetoothAdapter bluetoothAdapter;
+    ArrayList<String> deviceNameAddress=new ArrayList<>();
+    ArrayAdapter arrayAdapter;
 
     private final BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
         @Override
@@ -37,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
                 String address= device.getAddress();
                 String rssi=Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
                 Log.i("Device Found","Name : "+name+" Address : "+address+" RSSI : "+rssi);
+
+                if(name==null ||name.equals("")){
+
+                    deviceNameAddress.add(address+" - RSSI "+rssi+"dBm");
+                }else {
+                    deviceNameAddress.add(name+" - RSSI "+rssi+"dBm");
+                }
+                arrayAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -60,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         textView=findViewById(R.id.textView);
         listView=findViewById(R.id.listView);
         button=findViewById(R.id.button);
+        arrayAdapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1,deviceNameAddress);
+        listView.setAdapter(arrayAdapter);
 
         bluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
         IntentFilter intentFilter=new IntentFilter();
@@ -68,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(broadcastReceiver,intentFilter);
+
+
 
 
     }
