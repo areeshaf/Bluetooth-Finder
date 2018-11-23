@@ -1,11 +1,13 @@
 package com.example.hp.bluetoothfinder;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +31,12 @@ public class MainActivity extends AppCompatActivity {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 textView.setText("Finished");
                 button.setEnabled(true);
+            }else if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                BluetoothDevice device=intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String name=device.getName();
+                String address= device.getAddress();
+                String rssi=Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
+                Log.i("Device Found","Name : "+name+" Address : "+address+" RSSI : "+rssi);
             }
         }
     };
@@ -36,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
     public void searchFunc(View view){
         textView.setText("Searching...");
         button.setEnabled(false);
+
+        int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
         bluetoothAdapter.startDiscovery();
     }
 
